@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP</title>
+</head>
+
+<body>
+
+    <script>
+        class Animal {
+            constructor(name, color) {
+                console.log("This is from the constuctor")
+                this.name = name
+                this.color = color
+            }
+            move() {
+                console.log("The " + this.color + " " + this.name + " is moving")
+            }
+
+            jump() {
+                console.log("The " + this.color + " " + this.name + " is jumping")
+            }
+        }
+
+        let lion = new Animal("lion", "brown")
+        let tiger = new Animal("tiger", "black")
+
+        lion.move()
+        tiger.jump()
+
+        let x = {
+            "name": "yarob",
+            "age": 3242
+        }
+        console.log(typeof x)
+        console.log(typeof tiger)
+    </script>
+</body>
+
+</html>

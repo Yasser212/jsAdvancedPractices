@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="src/output.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <h3 class="hidden" id="title1">Title1</h3>
+    <h3 class="hidden" id="title2">Title2</h3>
+    <h3 class="hidden" id="title3">Title3</h3>
+    <h3 class="hidden" id="title4">Title4</h3>
+
+    <script>
+        // setTimeout(() => {
+        //     document.getElementById("title1").classList = "block"
+        //     setTimeout(() => {
+        //         document.getElementById("title2").classList = "block"
+        //         setTimeout(() => {
+        //             document.getElementById("title3").classList = "block"
+        //             setTimeout(() => {
+        //                 document.getElementById("title4").classList = "block"
+        //             }, 500);
+        //         }, 500);
+        //     }, 500);
+        // }, 500);
+
+        new Promise((resolve, reject) => {
+            setTimeout(() => {
+                document.getElementById("title1").classList = "block"
+                resolve()
+            }, 1000)
+        }).then(() => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    document.getElementById("title2").classList = "block"
+                    resolve()
+                }, 1000)
+            })
+        }).then(() => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    document.getElementById("title3").classList = "block"
+                    resolve()
+                }, 1000)
+            })
+        }).then(() => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    document.getElementById("title4").classList = "block"
+                    resolve()
+                }, 1000)
+            })
+        })
+
+    </script>
+</body>
+
+</html>
