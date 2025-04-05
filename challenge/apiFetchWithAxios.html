@@ -24,25 +24,33 @@
         const baseUrl = "https://jsonplaceholder.typicode.com/"
 
         function readUsers() {
-            const usersList = document.getElementById("users");
-            axios.get(baseUrl + "users")
-                .then(function (response) {
-                    const users = response.data
-                    users.forEach(user => {
-                        const li = document.createElement("li");
-                        li.className = "shadow-xl cursor-pointer rounded-3xl bg-white p-2 pl-4 leading-none";
-                        li.setAttribute("onclick", `userClick(${user.id}, this)`);
-                        li.innerHTML = `${user.name}<br><span class="text-xs leading-none">${user.email}</span>`;
-                        usersList.appendChild(li);
+            return new Promise((reslove, reject) => {
+
+                const usersList = document.getElementById("users");
+                axios.get(baseUrl + "users")
+                    .then((response) => {
+                        // or
+                        // .then(function (response) {
+                        const users = response.data
+                        users.forEach(user => {
+                            const li = document.createElement("li");
+                            li.className = "shadow-xl cursor-pointer rounded-3xl bg-white p-2 pl-4 leading-none";
+                            li.setAttribute("onclick", `userClick(${user.id}, this)`);
+                            li.innerHTML = `${user.name}<br><span class="text-xs leading-none">${user.email}</span>`;
+                            usersList.appendChild(li);
+                        })
+                        reslove()
                     })
-                })
-                .catch((error) => alert(error))
+                    .catch((error) => alert(error))
+            })
         }
 
         function getPosts(userId) {
             const postsList = document.getElementById("posts");
             axios.get(baseUrl + "posts?userId=" + userId)
-                .then(function (response) {
+                .then((response) => {
+                    // or
+                    // .then(function (response) {
                     const posts = response.data
                     postsList.innerHTML = ""; // Clear previous posts
                     for (post of posts) {
@@ -66,7 +74,9 @@
 
 
         readUsers()
-        getPosts(1)
+            .then(() => {
+                getPosts(1)
+            })
 
 
     </script>
