@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Challenge</title>
     <link rel="stylesheet" href="../src/output.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../node_modules/axios/dist/axios.js"></script>
 </head>
 
 <body>
@@ -26,22 +26,25 @@
         function readUsers() {
             return new Promise((reslove, reject) => {
 
-                const usersList = document.getElementById("users");
+                const usersList = document.getElementById("users")
                 axios.get(baseUrl + "users")
                     .then((response) => {
                         // or
                         // .then(function (response) {
                         const users = response.data
+                        console.log(users)
                         users.forEach(user => {
-                            const li = document.createElement("li");
+                            const li = document.createElement("li")
                             li.className = "shadow-xl cursor-pointer rounded-3xl bg-white p-2 pl-4 leading-none";
                             li.setAttribute("onclick", `userClick(${user.id}, this)`);
-                            li.innerHTML = `${user.name}<br><span class="text-xs leading-none">${user.email}</span>`;
+                            li.innerHTML = `${user.name}<br><span class="text-xs leading-none">${user.email}</span>`
                             usersList.appendChild(li);
                         })
                         reslove()
                     })
-                    .catch((error) => alert(error))
+                    .catch(error => {
+                        reject(error)
+                    })
             })
         }
 
@@ -76,6 +79,8 @@
         readUsers()
             .then(() => {
                 getPosts(1)
+            }).catch(error => {
+                alert(error)
             })
 
 

@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.selected {
+    @apply ring-amber-600 ring-4
+}
+
+.list_item {
+    @apply text-4xl pb-4 px-2 flex justify-between w-full
+}

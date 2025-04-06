@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prayer Time</title>
+    <link rel="stylesheet" href="../src/output.css">
+    <script src="../node_modules/axios/dist/axios.js"></script>
+    <!-- Add a Google Font for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Amiri', serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[url(../src/img/mekkah.jpg)] bg-cover bg-center min-h-screen">
+    <div class="flex justify-center w-full px-4 py-8 md:py-10 min-h-screen">
+        <div class="w-full md:w-4/5 lg:w-3/5 bg-stone-800/90 p-3 md:p-5 rounded-lg md:rounded-2xl my-auto">
+            <div
+                class="border-2 md:border-4 border-dashed border-white/80 w-full h-full rounded-lg md:rounded-xl text-center font-bold text-white p-3 md:p-5">
+                <h1 class="text-2xl md:text-4xl p-2 md:p-4 text-amber-200">مواقيت الصلاة</h1>
+                <hr class="border-white/50">
+
+                <form id="prayerForm" class="p-3 md:p-5 flex flex-col items-center space-y-4">
+                    <div class="flex flex-col md:flex-row w-full justify-center space-y-3 md:space-y-0 md:space-x-3">
+                        <input
+                            class="border border-amber-200/60 bg-stone-900/60 text-white rounded-md p-2 w-full md:w-1/2 placeholder-gray-400"
+                            placeholder="أدخل بلدك" name="country" id="country" type="text" required>
+                        <input
+                            class="border border-amber-200/60 bg-stone-900/60 text-white rounded-md p-2 w-full md:w-1/2 placeholder-gray-400"
+                            placeholder="أدخل مدينتك" name="city" id="city" type="text" required>
+                    </div>
+                    <div class="w-full flex flex-col items-center space-y-4">
+                        <input
+                            class="bg-stone-900/60 border border-amber-200/60 text-white text-center p-2 rounded-md w-full md:w-2/3"
+                            type="date" name="date" value="" id="date" required>
+                        <button type="button"
+                            class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-3 rounded-md hover:cursor-pointer transition-all duration-300 w-full md:w-auto"
+                            id="getPrayerButton">عرض مواقيت الصلاة</button>
+                    </div>
+                </form>
+
+                <hr class="border-white/50 mb-3">
+
+                <div id="resultContainer" class="flex flex-col">
+                    <div id="locationDisplay" class="text-xl md:text-2xl text-amber-200 mb-2 hidden"></div>
+                    <ul id="timeList" class="w-full flex flex-col gap-3 p-2 md:p-4"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set default date to today
+        document.getElementById("date").valueAsDate = new Date();
+
+        // Add event listener to the button
+        document.getElementById("getPrayerButton").addEventListener("click", function () {
+            const cityValue = document.getElementById("city").value;
+            const countryValue = document.getElementById("country").value;
+            const dateValue = document.getElementById("date").value;
+
+            if (cityValue && countryValue && dateValue) {
+                getPrayerTime(dateValue, cityValue, countryValue);
+
+                // Display location
+                const locationDisplay = document.getElementById("locationDisplay");
+                locationDisplay.textContent = `${cityValue}, ${countryValue}`;
+                locationDisplay.classList.remove("hidden");
+            } else {
+                alert("الرجاء ملء جميع الحقول");
+            }
+        });
+
+        function getPrayerTime(date, city, country) {
+            // Format date as DD-MM-YYYY for API
+            const formattedDate = date.split('-').reverse().join('-');
+
+            const baseUrl = `https://api.aladhan.com/v1/timingsByCity/${formattedDate}?city=${city}&country=${country}&method=3&shafaq=general&tune=5%2C3%2C5%2C7%2C9%2C-1%2C0%2C8%2C-6`;
+
+            const timeList = document.getElementById("timeList");
+            // Clear previous results
+            timeList.innerHTML = '<div class="flex justify-center"><div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-amber-300"></div></div>';
+
+            axios.get(baseUrl)
+                .then((response) => {
+                    timeList.innerHTML = '';
+                    const timings = response.data.data.timings;
+                    const date = response.data.data.date;
+
+                    // Prayer names in English and corresponding Arabic names
+                    const prayerNames = [
+                        { english: 'Fajr', arabic: 'الفجر' },
+                        { english: 'Sunrise', arabic: 'الشروق' },
+                        { english: 'Dhuhr', arabic: 'الظهر' },
+                        { english: 'Asr', arabic: 'العصر' },
+                        { english: 'Maghrib', arabic: 'المغرب' },
+                        { english: 'Isha', arabic: 'العشاء' }
+                    ];
+
+                    // Get times for wanted prayers
+                    prayerNames.forEach(prayer => {
+                        const time = timings[prayer.english];
+                        const li = document.createElement("li");
+                        li.className = "list-item flex justify-between items-center py-3 px-4 bg-stone-900/60 rounded-lg border-r-4 border-amber-500";
+                        li.innerHTML = `
+                            <span class="text-lg md:text-xl font-bold">${prayer.arabic}</span>
+                            <span class="text-lg md:text-xl text-amber-200">${time}</span>`;
+                        timeList.appendChild(li);
+                    });
+
+                    // Add Hijri date info if available
+                    if (date && date.hijri) {
+                        const hijriInfo = document.createElement("div");
+                        hijriInfo.className = "mt-5 text-center text-amber-200";
+                        hijriInfo.innerHTML = `
+                            <div class="text-lg">${date.hijri.day} ${date.hijri.month.ar} ${date.hijri.year}</div>
+                        `;
+                        timeList.appendChild(hijriInfo);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching prayer times:", error);
+                    timeList.innerHTML = '<li class="bg-red-500/60 text-white p-4 rounded-lg text-center">خطأ في جلب البيانات، يرجى التأكد من المدخلات</li>';
+                });
+        }
+    </script>
+</body>
+
+</html>
